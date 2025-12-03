@@ -1,16 +1,26 @@
 package db
 
 import (
+	"fmt"
+
+	"github.com/bert1727/ChatApp/internal/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-type A struct{}
+func SetupDB() *gorm.DB {
+	db, err := connectDB()
+	if err != nil {
+		fmt.Println("cannot connect to db, error:", err)
+	}
 
-func ConnectDB() (*gorm.DB, error) {
-	return gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
+	if err = db.AutoMigrate(&models.User{}, &models.Message{}); err != nil {
+		fmt.Println("error occured", err)
+	}
+
+	return db
 }
 
-func AutoMigrate(db *gorm.DB, models ...any) error {
-	return db.AutoMigrate(models...)
+func connectDB() (*gorm.DB, error) {
+	return gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
 }

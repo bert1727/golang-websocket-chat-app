@@ -6,27 +6,28 @@ import (
 	"log"
 	"log/slog"
 
+	"github.com/bert1727/ChatApp/internal/models"
 	"github.com/gofiber/contrib/v3/websocket"
 )
 
+// type client interface{}
+
 // TODO: make an interface for client
 type Client struct {
-	ID   string
-	User User
-	Conn *websocket.Conn // placeholder for actual ws conn
-	Hub  *Hub
-
-	SendChan chan Message
+	ID       uint
+	Conn     *websocket.Conn // placeholder for actual ws conn
+	Hub      Hub
+	SendChan chan models.Message
 	RoomID   string
 }
 
-func (c *Client) Send(msg Message) {
+func (c *Client) Send(msg models.Message) {
 	c.SendChan <- msg
 }
 
 func (c *Client) ReadPump() {
 	for {
-		var msg Message
+		var msg models.Message
 		err := c.Conn.ReadJSON(&msg)
 		if err != nil {
 			c.Hub.UnregisterClient(c)

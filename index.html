@@ -1,67 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<body>
-  <h2>Fiber v3 WebSocket Chat</h2>
+  <body>
+    <h2>Fiber v3 WebSocket Chat</h2>
 
+    <input id="msg" placeholder="Message..." />
 
-  <input id="msg" placeholder="Message..." />
-
-    <label>Sender ID: <input id="receiverIdInput" type="text" value="1"></label>
+    <label
+      >Receiver Id: <input id="receiverIdInput" type="text" value="1"
+    /></label>
     <textarea id="content" placeholder="Текст сообщения..."></textarea>
 
-        
-  <button onclick="send()" id="but">Send</button>
-  <div id="chat"></div>
+    <button onclick="send()" id="but">Send</button>
+    <div id="chat"></div>
 
-  <script>
-    const ws = new WebSocket("ws://localhost:6969/ws");
-    
+    <script>
+      const ws = new WebSocket(
+        "ws://localhost:6969/ws?name=alba2&password=123",
+      );
 
-    ws.onmessage = (event) => {
-    console.log("New message from server", event.data);
-      document.getElementById("chat").innerHTML += `<p>${event.data}</p>`;
-    };
+      ws.onmessage = (event) => {
+        console.log("New message from server", event.data);
+        document.getElementById("chat").innerHTML += `<p>${event.data}</p>`;
+      };
 
-
-     // Add event listener to the input field
-    document.getElementById("msg").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
+      // Add event listener to the input field
+      document
+        .getElementById("msg")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
             event.preventDefault();
-            document.getElementById("but").click(); // This will simulate a click on the button
-            // You could also directly call a function here:
-            // performAction();
-        }
-    });
-    function send() {
-        const receiverIdInput = document.getElementById('receiverIdInput')
-        const contentInput = document.getElementById('content');
+            document.getElementById("but").click();
+          }
+        });
+      function send() {
+        const receiverIdInput = document.getElementById("receiverIdInput");
+        const contentInput = document.getElementById("content");
         // const senderId = senderIdInput.value
         const input = document.getElementById("msg");
 
-        
-        const senderId2 = ""
+        const senderId2 = "";
         const msg = {
-            id: "1",
-            SenderId: senderId2+"1",
-            ReceiverId: receiverIdInput.value,
-            roomId: "0",
-            content: contentInput.value,
-
-            timestamp: Date.now().toString(),
+          id: 1,
+          SenderId: senderId2 + "1",
+          ReceiverId: Number(receiverIdInput.value),
+          roomId: "0",
+          content: contentInput.value,
         };
 
-
-        
         const json = JSON.stringify(msg);
         ws.send(json);
         console.log("json was sent:", json);
         // ws.send(input.value);
         input.value = "";
-        contentInput.value = '';
-    }
-  </script>
-
-</body>
+        contentInput.value = "";
+      }
+    </script>
+  </body>
 </html>
-
-
