@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/bert1727/ChatApp/internal/models"
+	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/repository"
 )
 
 type MessageService interface {
-	SaveMessage(message models.Message) error
+	SaveMessage(message domain.Message) error
 }
 
 type messageService struct {
@@ -17,6 +17,6 @@ func NewMessageService(repo repository.MessageRepository) MessageService {
 	return &messageService{repo: repo}
 }
 
-func (s *messageService) SaveMessage(msg models.Message) error {
+func (s *messageService) SaveMessage(msg domain.Message) error {
 	return s.repo.SaveMessage(msg)
 }

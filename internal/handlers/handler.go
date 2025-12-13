@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"log"
-
-	"github.com/bert1727/ChatApp/internal/models"
+	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/service"
 	"github.com/bert1727/ChatApp/internal/ws"
+	jwtware "github.com/gofiber/contrib/v3/jwt"
 	"github.com/gofiber/contrib/v3/websocket"
 	"github.com/gofiber/fiber/v3"
+	"github.com/rs/zerolog/log"
 )
 
 type WSHandler interface {
@@ -27,42 +27,50 @@ func NewWSHandler(h ws.Hub, us service.UserService) WSHandler {
 }
 
 func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
-	name := c.Query("name")
-	password := c.Query("password")
-	log.Println("params:", name, password)
-	if name == "" {
-		return c.Status(400).SendString("missing or invalid name")
+	token := jwtware.FromContext(c)
+
+	log.Info().Any("token from context", token)
+	claims := token.Claims.(*domain.JWTClaims)
+	if claims == nil {
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	user, err := h.userService.FindUserByName(name)
-	log.Println("user was found")
+	user, err := h.userService.FindUserByID(claims.UserID)
 	if err != nil {
-		log.Println("user not found")
+		log.Info().Msg("user not found")
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			// NOTE: user is not register or logout so do a redirect
 			"error": "user not found",
 		})
 	}
 
-	if user.Password != password {
-		log.Println("missing or invalid password")
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "user not found",
-		})
-	}
+	// NOTE: i don't need this cause pass a jwt token
 
+	// if err := service.CheckPassword(user.Password, password); err != nil {
+	// 	log.Info().Msg("missing or invalid password")
+	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+	// 		"error": "user not found",
+	// 	})
+	// }
+	//
 	return websocket.New(func(conn *websocket.Conn) {
 		client := &ws.Client{
 			Conn:     conn,
 			Hub:      h.hub,
-			SendChan: make(chan models.Message, 32),
+			SendChan: make(chan domain.Message, 32),
 			ID:       user.ID,
 		}
 
 		h.hub.RegisterClient(client)
-		log.Println("client connected:", client.ID)
+		log.Info().
+			Uint("client id", client.ID).
+			Msg("client connected")
 
 		defer func() {
-			log.Println("client disconnected:", client.ID)
+			log.Info().
+				Uint("client id", client.ID).
+				Msg("client disconnected")
+
 			h.hub.UnregisterClient(client)
 			conn.Close()
 		}()

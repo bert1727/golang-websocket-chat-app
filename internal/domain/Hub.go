@@ -1,4 +1,4 @@
-package models
+package domain
 
 import (
 	"log"
@@ -23,7 +23,7 @@ func (h *Hub) Run(id int) {
 		message := <-h.Broadcast
 		for _, client := range h.Clients {
 			if err := client.WriteMessage(websocket.TextMessage, message); err != nil {
-				client.Close()
+				_ = client.Close()
 				log.Println("client with id:", id, " was deleted ")
 				delete(h.Clients, id)
 			}

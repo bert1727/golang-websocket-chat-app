@@ -1,11 +1,11 @@
-package models
+package domain
 
 import "time"
 
 type MessageModels struct {
 	ID         uint   `gorm:"primaryKey"`
 	SenderID   string // user who sent
-	ReceiverID uint   // user who receives (или RoomID для чата-комнаты)
+	ReceiverID uint   // user who receives
 	Content    string
 	CreatedAt  time.Time
 }
@@ -13,6 +13,7 @@ type MessageModels struct {
 // DTO
 type Message struct {
 	ID         uint `gorm:"primaryKey"`
+	Type       string
 	UserID     uint
 	SenderID   string
 	ReceiverID uint

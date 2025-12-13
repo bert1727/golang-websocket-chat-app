@@ -2,16 +2,17 @@ package ws
 
 import (
 	"fmt"
+	"sync"
 
-	"github.com/bert1727/ChatApp/internal/models"
+	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/service"
 	"github.com/gofiber/fiber/v2/log"
 )
 
 type Hub interface {
 	Run()
-	SendToRoom(d string, msg models.Message)
-	SendToUser(userID uint, msg models.Message)
+	SendToRoom(d string, msg domain.Message)
+	SendToUser(userID uint, msg domain.Message)
 	UnregisterClient(c *Client)
 	RegisterClient(c *Client)
 }
@@ -20,9 +21,10 @@ type hub struct {
 	clients        map[uint]*Client
 	register       chan *Client
 	unregister     chan *Client
-	broadcast      chan models.Message
+	broadcast      chan domain.Message
 	messageService service.MessageService
 	userService    service.UserService
+	mu             sync.RWMutex
 }
 
 func NewHub(us service.UserService, ms service.MessageService) Hub {
@@ -30,7 +32,7 @@ func NewHub(us service.UserService, ms service.MessageService) Hub {
 		clients:        make(map[uint]*Client),
 		register:       make(chan *Client),
 		unregister:     make(chan *Client),
-		broadcast:      make(chan models.Message),
+		broadcast:      make(chan domain.Message),
 		userService:    us,
 		messageService: ms,
 	}
@@ -42,7 +44,9 @@ func (h *hub) Run() {
 	for {
 		select {
 		case client := <-h.register:
+			h.mu.Lock()
 			h.clients[client.ID] = client
+			h.mu.Unlock()
 			fmt.Println("Client registered in hub, client id:", client.ID)
 
 		case client := <-h.unregister: // unregister user when disconnected
@@ -54,18 +58,15 @@ func (h *hub) Run() {
 				h.SendToUser(msg.ReceiverID, msg)
 				continue
 			}
-			// if msg.RoomID != "" {
-			// 	h.SendToRoom(msg.RoomID, msg)
-			// }
 		}
 	}
 }
 
-func (h *hub) SendToRoom(d string, msg models.Message) {
+func (h *hub) SendToRoom(d string, msg domain.Message) {
 	panic("unimplemented")
 }
 
-func (h *hub) SendToUser(userID uint, msg models.Message) {
+func (h *hub) SendToUser(userID uint, msg domain.Message) {
 	log.Info("the message was get almost... User id is ", userID)
 	if c, ok := h.clients[userID]; ok {
 		log.Info("the message sent to user:", "userID", userID, "msg", msg)

@@ -3,17 +3,17 @@ package service
 import (
 	"errors"
 
-	"github.com/bert1727/ChatApp/internal/models"
+	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/repository"
 	"github.com/gofiber/fiber/v2/log"
 )
 
 type UserService interface {
-	FindUserByID(userID uint) (*models.User, error)
-	Register(username, password string) (*models.User, error)
+	FindUserByID(userID uint) (*domain.User, error)
+	Register(username, password string) (*domain.User, error)
 	DeleteUserByID(userID uint) error
-	UpdateUser(user *models.User) error
-	FindUserByName(name string) (*models.User, error)
+	UpdateUser(user *domain.User) error
+	FindUserByName(name string) (*domain.User, error)
 }
 
 type userService struct {
@@ -24,7 +24,7 @@ func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{repo: repo}
 }
 
-func (s *userService) FindUserByID(userID uint) (*models.User, error) {
+func (s *userService) FindUserByID(userID uint) (*domain.User, error) {
 	user, err := s.repo.FindUserByID(userID)
 	if err != nil {
 		return nil, err
@@ -32,11 +32,11 @@ func (s *userService) FindUserByID(userID uint) (*models.User, error) {
 	return user, nil
 }
 
-func (s *userService) CreateNewUser(u *models.User) error {
+func (s *userService) CreateNewUser(u *domain.User) (*domain.User, error) {
 	return s.repo.CreateNewUser(u)
 }
 
-func (s *userService) FindAllUsers() (*models.User, error) {
+func (s *userService) FindAllUsers() (*domain.User, error) {
 	return s.repo.FindAllUsers()
 }
 
@@ -44,7 +44,7 @@ func (s *userService) DeleteUserByID(userID uint) error {
 	return s.repo.DeleteUserByID(userID)
 }
 
-func (s *userService) FindUserByName(name string) (*models.User, error) {
+func (s *userService) FindUserByName(name string) (*domain.User, error) {
 	u, err := s.repo.FindUserByName(name)
 	if err != nil {
 		log.Info("user was not find", err)
@@ -53,7 +53,7 @@ func (s *userService) FindUserByName(name string) (*models.User, error) {
 	return u, nil
 }
 
-func (s *userService) Register(username, password string) (*models.User, error) {
+func (s *userService) Register(username, password string) (*domain.User, error) {
 	if username == "" {
 		return nil, errors.New("username is required")
 	}
@@ -62,15 +62,27 @@ func (s *userService) Register(username, password string) (*models.User, error) 
 	}
 
 	// NOTE: add hashing and validaton for password
-	user := &models.User{
-		Name:     username,
+	user := &domain.User{
+		Username: username,
 		Password: password,
 	}
 
-	err := s.repo.CreateNewUser(user)
+	user, err := s.repo.CreateNewUser(user)
+	if err != nil {
+		log.Info("couldn't create a user", err)
+	}
 	return user, err
 }
 
-func (s *userService) UpdateUser(user *models.User) error {
+func (s *userService) UpdateUser(user *domain.User) error {
 	return s.repo.UpdateUser(user)
+}
+
+func (s *userService) GetUserByEmail(email string) (*domain.User, error) {
+	user, err := s.repo.GetUserByEmail(email)
+	if err != nil {
+		log.Info("user wasn't found")
+		return nil, err
+	}
+	return user, err
 }

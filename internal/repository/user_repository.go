@@ -1,17 +1,22 @@
 package repository
 
 import (
-	"github.com/bert1727/ChatApp/internal/models"
+	"errors"
+	"fmt"
+	"log"
+
+	"github.com/bert1727/ChatApp/internal/domain"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	FindUserByID(userID uint) (*models.User, error)
-	CreateNewUser(user *models.User) error
-	UpdateUser(user *models.User) error
-	FindAllUsers() (*models.User, error)
+	FindUserByID(userID uint) (*domain.User, error)
+	CreateNewUser(user *domain.User) (*domain.User, error)
+	UpdateUser(user *domain.User) error
+	FindAllUsers() (*domain.User, error)
 	DeleteUserByID(userID uint) error
-	FindUserByName(name string) (*models.User, error)
+	FindUserByName(name string) (*domain.User, error)
+	GetUserByEmail(email string) (*domain.User, error)
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
@@ -22,41 +27,74 @@ type userRepository struct {
 	db *gorm.DB
 }
 
-func (u *userRepository) CreateNewUser(user *models.User) error {
-	return u.db.Create(user).Error
-}
-
-func (u *userRepository) UpdateUser(user *models.User) error {
-	return u.db.Model(user).Updates(user).Error
-}
-
-func (u *userRepository) FindUserByID(userID uint) (*models.User, error) {
-	var user models.User
-	// NOTE: it will return nothing if there are no such user
-	if err := u.db.First(&user, userID).Error; err != nil {
-		return nil, err
+func (r *userRepository) CreateNewUser(user *domain.User) (*domain.User, error) {
+	if user.Email == "" || user.Username == "" {
+		log.Print("email and username are required")
+		return nil, fmt.Errorf("email and username are required")
 	}
+
+	result := r.db.Create(user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
+			return nil, fmt.Errorf("user with this email already exists")
+		}
+		return nil, result.Error
+	}
+
+	return user, nil
+}
+
+func (r *userRepository) UpdateUser(user *domain.User) error {
+	return r.db.Model(user).Updates(user).Error
+}
+
+func (r *userRepository) FindUserByID(userID uint) (*domain.User, error) {
+	var user domain.User
+	// NOTE: it will return nothing if there are no such user
+	err := r.db.First(&user, userID).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("user not found")
+		} else {
+			return nil, errors.New("failed to find a user")
+		}
+	}
+
 	return &user, nil
 }
 
-func (u *userRepository) FindAllUsers() (*models.User, error) {
-	var users models.User
-	if err := u.db.Find(&users).Error; err != nil {
+func (r *userRepository) FindAllUsers() (*domain.User, error) {
+	var users domain.User
+	if err := r.db.Find(&users).Error; err != nil {
 		return nil, err
 	}
 
 	return &users, nil
 }
 
-func (u *userRepository) DeleteUserByID(userID uint) error {
-	var user models.User
-	return u.db.Delete(&user, userID).Error
+func (r *userRepository) DeleteUserByID(userID uint) error {
+	var user domain.User
+	return r.db.Delete(&user, userID).Error
 }
 
-func (u *userRepository) FindUserByName(name string) (*models.User, error) {
-	var user models.User
-	if err := u.db.Where("name = ?", name).First(&user).Error; err != nil {
+func (r *userRepository) FindUserByName(name string) (*domain.User, error) {
+	var user domain.User
+	if err := r.db.Where("username = ?", name).First(&user).Error; err != nil {
 		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *userRepository) GetUserByEmail(email string) (*domain.User, error) {
+	var user domain.User
+	err := r.db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		log.Println("user not found")
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("user not found")
+		} else {
+			return nil, errors.New("failed to get user by email")
+		}
 	}
 	return &user, nil
 }

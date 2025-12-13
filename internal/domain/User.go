@@ -1,12 +1,12 @@
-package models
+package domain
 
 import "time"
 
 type User struct {
 	ID        uint `gorm:"primaryKey"`
-	Name      string
+	Username  string
 	Password  string
-	Email     string
+	Email     string `gorm:"unique"`
 	Online    bool
 	Messages  []Message `json:"messages" gorm:"foreignKey:UserID"`
 	UpdatedAt time.Time

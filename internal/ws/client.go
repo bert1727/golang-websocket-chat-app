@@ -6,7 +6,7 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/bert1727/ChatApp/internal/models"
+	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/gofiber/contrib/v3/websocket"
 )
 
@@ -17,17 +17,17 @@ type Client struct {
 	ID       uint
 	Conn     *websocket.Conn // placeholder for actual ws conn
 	Hub      Hub
-	SendChan chan models.Message
+	SendChan chan domain.Message
 	RoomID   string
 }
 
-func (c *Client) Send(msg models.Message) {
+func (c *Client) Send(msg domain.Message) {
 	c.SendChan <- msg
 }
 
 func (c *Client) ReadPump() {
 	for {
-		var msg models.Message
+		var msg domain.Message
 		err := c.Conn.ReadJSON(&msg)
 		if err != nil {
 			c.Hub.UnregisterClient(c)
