@@ -22,7 +22,9 @@ type LoginResponse struct {
 }
 
 type RegisterRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Username string `json:"username"`
+	Email    string `json:"email" validate:"required,email,min=2,max=50"`
+	Username string `json:"username" validate:"required,min=2,max=50"`
+
+	Password        string `json:"password" validate:"min=8"`
+	PasswordConfirm string `json:"password_confirm" validate:"required,eqfield=Password"`
 }

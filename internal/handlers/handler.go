@@ -29,7 +29,7 @@ func NewWSHandler(h ws.Hub, us service.UserService) WSHandler {
 func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
 	token := jwtware.FromContext(c)
 
-	log.Info().Any("token from context", token)
+	log.Info().Any("token from context", token).Msg("token is")
 	claims := token.Claims.(*domain.JWTClaims)
 	if claims == nil {
 		return c.SendStatus(fiber.StatusBadRequest)
@@ -44,15 +44,6 @@ func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
 		})
 	}
 
-	// NOTE: i don't need this cause pass a jwt token
-
-	// if err := service.CheckPassword(user.Password, password); err != nil {
-	// 	log.Info().Msg("missing or invalid password")
-	// 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-	// 		"error": "user not found",
-	// 	})
-	// }
-	//
 	return websocket.New(func(conn *websocket.Conn) {
 		client := &ws.Client{
 			Conn:     conn,
@@ -76,37 +67,7 @@ func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
 		}()
 
 		go client.WritePump()
+
 		client.ReadPump()
 	})(c)
 }
-
-// TODO: complete this function
-
-// func (h *wsHandler) HandleWSConnection(conn *websocket.Conn) {
-// 	// user, err := h.userService.FindUserByID(userID)
-// 	if err != nil {
-// 		log.Println("invalid user")
-// 		conn.Close()
-//
-// 		return
-// 	}
-//
-// 	// client := &ws.Client{
-// 	// 	Conn:     conn,
-// 	// 	Hub:      h.hub,
-// 	// 	SendChan: make(chan models.Message, 32), // limit the size
-// 	// }
-//
-// 	log.Println("client connected")
-// 	h.hub.RegisterClient(client)
-//
-// 	defer func() {
-// 		log.Println("client disconnected:", client.ID)
-// 		// client.Hub.Unregister <- client
-// 		h.hub.UnregisterClient(client)
-// 		conn.Close()
-// 	}()
-//
-// 	go client.WritePump()
-// 	client.ReadPump()
-// }

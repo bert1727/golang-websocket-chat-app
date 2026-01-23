@@ -3,11 +3,10 @@ package ws
 
 import (
 	"fmt"
-	"log"
-	"log/slog"
 
 	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/gofiber/contrib/v3/websocket"
+	"github.com/rs/zerolog/log"
 )
 
 // type client interface{}
@@ -30,8 +29,9 @@ func (c *Client) ReadPump() {
 		var msg domain.Message
 		err := c.Conn.ReadJSON(&msg)
 		if err != nil {
+			c.sendError()
 			c.Hub.UnregisterClient(c)
-			slog.Error("Error reading json:", err)
+			log.Err(err).Msg("Failed to read json message")
 			return
 		}
 
@@ -43,36 +43,26 @@ func (c *Client) ReadPump() {
 }
 
 func (c *Client) WritePump() {
-	log.Println("write pump started for client:", c.ID)
+	log.Info().Uint("client Id", c.ID).Msg("write pump started for client:")
 	for msg := range c.SendChan {
 		if err := c.Conn.WriteJSON(msg); err != nil {
-			log.Println("Error writing json:", err)
+			log.Err(err).Msg("Error writing json")
 			break
 		}
 	}
 }
 
-// func (c *Client) WritePump() {
-// 	log.Println("Starting write pump for client:", c.ID)
-// 	for {
-// 		select {
-// 		case msg, ok := <-c.SendChan:
-// 			if !ok {
-// 				// channel closed - client disconnected
-// 				c.Conn.Close()
-// 				log.Println("channel was closed")
-// 				return
-// 			}
-// 			err := c.Conn.WriteJSON(msg)
-// 			if err != nil {
-// 				c.Conn.Close()
-// 				return
-// 			}
-// 		}
-// 	}
-// }
-//
-// func NewClient(h *Hub, conn *websocket.Conn, userID uint) *Client
-// func (c *Client) Send(msg []byte)
-// func (c *Client) readPump()
-// func (c *Client) writePump()
+func (c *Client) sendError() {
+	errorMsg := domain.Message{
+		SenderID:   0,
+		ReceiverID: c.ID,
+		Type:       "error",
+		Content:    "failed to parse a message",
+	}
+	err := c.Conn.WriteJSON(errorMsg)
+	if err != nil {
+		log.Error().Msg("failed to write json error")
+	}
+
+	c.SendChan <- errorMsg
+}

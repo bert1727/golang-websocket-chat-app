@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"github.com/bert1727/ChatApp/internal/domain"
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/go-playground/validator/v10"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/bert1727/ChatApp/internal/config"
@@ -17,6 +18,7 @@ import (
 type authService struct {
 	userRepo repository.UserRepository
 	cfg      *config.Config
+	valid    *validator.Validate
 }
 
 type AuthService interface {
@@ -31,6 +33,7 @@ func NewAuthService(userRepo repository.UserRepository, cfg *config.Config) Auth
 	return &authService{
 		userRepo: userRepo,
 		cfg:      cfg,
+		valid:    validator.New(),
 	}
 }
 
@@ -53,9 +56,12 @@ func (s *authService) GenerateTokens(user *domain.User) (string, string, error) 
 	}
 
 	// Refresh Token
-	refreshClaims := jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
+	refreshClaims := domain.JWTClaims{
+		UserID: user.ID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
@@ -67,11 +73,12 @@ func (s *authService) GenerateTokens(user *domain.User) (string, string, error) 
 	return accessString, refreshString, nil
 }
 
-func (s *authService) VerifyToken(tokenString string) (*domain.JWTClaims, error) {
+func (s *authService) VerifyToken(refreshToken string) (*domain.JWTClaims, error) {
 	claims := &domain.JWTClaims{}
 
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			log.Info().Msg("unexpected signing method")
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(s.cfg.JWTSecret), nil
@@ -88,15 +95,16 @@ func (s *authService) VerifyToken(tokenString string) (*domain.JWTClaims, error)
 }
 
 func (s *authService) Login(email, password string) (*domain.LoginResponse, error) {
-	user, err := s.userRepo.GetUserByEmail(email)
+	user, err := s.userRepo.GetByEmail(email)
 	if err != nil {
-		log.Info("invalid email")
+		log.Info().Msg("invalid email")
 		return nil, fmt.Errorf("invalid credentials")
 	}
 
 	if err := CheckPassword(user.Password, password); err != nil {
-		log.Info("invalid password")
-		return nil, errors.New("invalid credentials")
+		fmt.Println("Пароли:\n", user.Password, password)
+		log.Info().Msg("invalid password")
+		return nil, fmt.Errorf("invalid credentials")
 	}
 
 	accessToken, refreshToken, err := s.GenerateTokens(user)
@@ -112,6 +120,19 @@ func (s *authService) Login(email, password string) (*domain.LoginResponse, erro
 }
 
 func (s *authService) Register(req *domain.RegisterRequest) (*domain.LoginResponse, error) {
+	// Validation
+	err := s.valid.Struct(*req)
+	if err != nil {
+		var validateErrs validator.ValidationErrors
+		if errors.As(err, &validateErrs) {
+			for _, e := range validateErrs {
+				fmt.Println(e.Namespace())
+			}
+		}
+		return nil, err
+		// FIX: change return types
+	}
+
 	hashedPassword, err := HashPassword(req.Password)
 	if err != nil {
 		return nil, err
@@ -123,21 +144,21 @@ func (s *authService) Register(req *domain.RegisterRequest) (*domain.LoginRespon
 		Username: req.Username,
 	}
 
-	createdUser, err := s.userRepo.CreateNewUser(user)
+	createdUser, err := s.userRepo.Create(user)
 	if err != nil {
-		log.Info(err)
+		log.Err(err).Msg("failed to create a user")
 		return nil, err
 	}
 
-	log.Info("user was added")
+	log.Info().Msg("user was added")
 
 	accessToken, refreshToken, err := s.GenerateTokens(createdUser)
 	if err != nil {
-		log.Info("Cannot generate refreshToken: ", err)
+		log.Info().Err(err).Msg("Cannot generate refreshToken")
 		return nil, err
 	}
 
-	log.Info("accessToken is generated")
+	log.Info().Msg("accessToken is generated")
 	return &domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
@@ -145,24 +166,25 @@ func (s *authService) Register(req *domain.RegisterRequest) (*domain.LoginRespon
 	}, nil
 }
 
+// Update accessToken via refresh token
 func (s *authService) RefreshToken(refreshToken string) (string, error) {
 	claims, err := s.VerifyToken(refreshToken)
 	if err != nil {
 		return "", err
 	}
 
-	// Get user
-	user, err := s.userRepo.FindUserByID(claims.UserID)
+	user, err := s.userRepo.FindByID(claims.UserID)
 	if err != nil {
 		return "", err
 	}
 
 	accessToken, _, err := s.GenerateTokens(user)
+	log.Info().Uint("user id", user.ID).Msg("accessToken generated for user")
 	return accessToken, err
 }
 
 func HashPassword(plain string) (string, error) {
-	const cost = 12
+	const cost = 10
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(plain), cost) // [web:41]
 	if err != nil {

@@ -27,3 +27,8 @@ go.work
 # Environment files (if using .env for configuration)
 .env
 .env.local
+
+# Database
+*.db
+
+TODO.md

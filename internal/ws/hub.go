@@ -1,11 +1,13 @@
 package ws
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
 	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/service"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2/log"
 )
 
@@ -69,7 +71,29 @@ func (h *hub) SendToRoom(d string, msg domain.Message) {
 func (h *hub) SendToUser(userID uint, msg domain.Message) {
 	log.Info("the message was get almost... User id is ", userID)
 	if c, ok := h.clients[userID]; ok {
-		log.Info("the message sent to user:", "userID", userID, "msg", msg)
+		log.Info("the message sent to user:", "userID", userID, "msg", msg.Content)
+
+		msg.SenderID = c.ID
+		err := validator.New().Struct(msg)
+		if err != nil {
+			// log.Error().Err(err).Msg("Failed to validate a new message")
+
+			var validateErrs validator.ValidationErrors
+			if errors.As(err, &validateErrs) {
+				for _, e := range validateErrs {
+					log.Info("error is:", e)
+					// log.Info().Msg(e.Namespace())
+				}
+			}
+
+			c.sendError()
+			return
+		}
+
+		if err := h.messageService.SaveMessage(&msg); err != nil {
+			log.Info("failed to save a message in db")
+		}
+
 		c.Send(msg)
 	}
 }

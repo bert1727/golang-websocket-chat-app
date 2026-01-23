@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"os"
 
 	// "github.com/gofiber/contrib/v3/websocket"
-
 	"github.com/bert1727/ChatApp/internal/config"
 	"github.com/bert1727/ChatApp/internal/db"
 	"github.com/bert1727/ChatApp/internal/domain"
@@ -17,6 +17,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/extractors"
 	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -25,7 +26,20 @@ import (
 )
 
 func main() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: func(c fiber.Ctx, err error) error {
+			// Status code defaults to 500
+			code := fiber.StatusInternalServerError
+
+			// Retrieve the custom status code if it's a *fiber.Error
+			var e *fiber.Error
+			if errors.As(err, &e) {
+				code = e.Code
+			}
+
+			return c.Status(code).SendString("something went wrong")
+		},
+	})
 	cfg := config.New()
 
 	consoleWriter := zerolog.ConsoleWriter{
@@ -49,6 +63,11 @@ func main() {
 	// }))
 
 	app.Use(cors.New())
+
+	app.Use(recover.New())
+	app.Get("/", func(c fiber.Ctx) error {
+		panic("testing panic")
+	})
 
 	// TODO: do this in separate function
 	app.Use("/ws", func(c fiber.Ctx) error {
@@ -74,13 +93,17 @@ func main() {
 	wsHandler := handlers.NewWSHandler(hub, userService)
 
 	authService := service.NewAuthService(userRepo, cfg)
-	httpH := handlers.NewHTTPNandler(authService)
-	authHandler := handlers.HTTPHandler(httpH)
+	authHandler := handlers.NewHTTPNandler(authService)
+	// authHandler := handlers.HTTPHandler(httpH)
+
 	go hub.Run()
 
+	// Endpoints
 	app.Post("/register", authHandler.Register)
 	app.Post("/login", authHandler.Login)
-	// Endpoints
+
+	app.Post("/refresh", authHandler.RefreshToken)
+
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{Key: []byte(cfg.JWTSecret)},
 		Extractor:  extractors.FromAuthHeader("Bearer"),

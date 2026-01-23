@@ -4,11 +4,13 @@ import (
 	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/service"
 	"github.com/gofiber/fiber/v3"
+	"github.com/rs/zerolog/log"
 )
 
 type HTTPHandler interface {
 	Register(c fiber.Ctx) error
 	Login(c fiber.Ctx) error
+	RefreshToken(c fiber.Ctx) error
 }
 
 func NewHTTPNandler(s service.AuthService) HTTPHandler {
@@ -53,10 +55,31 @@ func (h *httpHandler) Login(c fiber.Ctx) error {
 		Name:     "refresh_token",
 		Value:    res.RefreshToken,
 		HTTPOnly: true,
-		Secure:   true, // TODO: change later
+		Secure:   true,
 		SameSite: "Strict",
 		MaxAge:   7 * 24 * 60 * 60, // 7 days
 	})
 
 	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (h *httpHandler) RefreshToken(c fiber.Ctx) error {
+	refreshToken := c.Cookies("refresh_token")
+	log.Info().Str("refresh_token", refreshToken).Msg("refresh_token from cookie is")
+	if refreshToken == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": "there are no cookie with refresh token",
+		})
+	}
+
+	newAccessToken, err := h.authService.RefreshToken(refreshToken)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"err": "refresh token is invalid",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"newAccessToken": newAccessToken,
+	})
 }

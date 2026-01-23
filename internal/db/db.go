@@ -12,9 +12,10 @@ import (
 func SetupDB() *gorm.DB {
 	db, err := connectDB()
 	if err != nil {
-		fmt.Println("cannot connect to db, error:", err)
-		panic("")
+		fmt.Println("failed to connect db, error:", err)
 	}
+
+	db.Exec("PRAGMA foreign_keys = ON")
 
 	if err = db.AutoMigrate(&domain.User{}, &domain.Message{}); err != nil {
 		panic(fmt.Sprintf("can't AutoMigrate err: %v", err))
