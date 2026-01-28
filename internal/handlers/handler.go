@@ -1,73 +1,65 @@
 package handlers
 
 import (
+	"github.com/bert1727/ChatApp/internal/config"
 	"github.com/bert1727/ChatApp/internal/domain"
 	"github.com/bert1727/ChatApp/internal/service"
 	"github.com/bert1727/ChatApp/internal/ws"
 	jwtware "github.com/gofiber/contrib/v3/jwt"
-	"github.com/gofiber/contrib/v3/websocket"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/extractors"
 	"github.com/rs/zerolog/log"
 )
 
-type WSHandler interface {
-	HandleWSConnection(c fiber.Ctx) error
+type Handlers struct {
+	Auth AuthJWTHandler
+	WS   WSHandler
+	Cfg  *config.Config
 }
 
-type wsHandler struct {
-	hub         ws.Hub
-	userService service.UserService
+func (h *Handlers) SetupHandlers(app *fiber.App) {
+	auth := app.Group("/auth")
+	auth.Post("/register", h.Auth.Register)
+	auth.Post("/login", h.Auth.Login)
+	auth.Post("/refresh", h.Auth.RefreshToken)
 }
 
-func NewWSHandler(h ws.Hub, us service.UserService) WSHandler {
-	return &wsHandler{
-		hub:         h,
-		userService: us,
+func (h *Handlers) SetupRestrictedHandlers(app *fiber.App) {
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{Key: []byte(h.Cfg.JWTSecret)},
+		Extractor:  extractors.FromAuthHeader("Bearer"),
+		Claims:     &domain.JWTClaims{},
+	}))
+	app.Get("/ws", h.WS.HandleWSConnection)
+}
+
+func NewHandlers(
+	authService service.AuthService,
+	hub ws.Hub,
+	userService service.UserService,
+	cfg *config.Config,
+) *Handlers {
+	return &Handlers{
+		Auth: NewAuthJWTHandler(authService),
+		WS:   NewWSHandler(hub, userService),
+		Cfg:  cfg,
 	}
 }
 
-func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
-	token := jwtware.FromContext(c)
-
-	log.Info().Any("token from context", token).Msg("token is")
-	claims := token.Claims.(*domain.JWTClaims)
-	if claims == nil {
-		return c.SendStatus(fiber.StatusBadRequest)
-	}
-
-	user, err := h.userService.FindUserByID(claims.UserID)
-	if err != nil {
-		log.Info().Msg("user not found")
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			// NOTE: user is not register or logout so do a redirect
-			"error": "user not found",
-		})
-	}
-
-	return websocket.New(func(conn *websocket.Conn) {
-		client := &ws.Client{
-			Conn:     conn,
-			Hub:      h.hub,
-			SendChan: make(chan domain.Message, 32),
-			ID:       user.ID,
+func testingHandler(app *fiber.App) {
+	app.Get("/test", func(c fiber.Ctx) error {
+		token := jwtware.FromContext(c)
+		claims := token.Claims.(*domain.JWTClaims)
+		if claims == nil {
+			return c.SendStatus(fiber.StatusBadRequest)
 		}
 
-		h.hub.RegisterClient(client)
-		log.Info().
-			Uint("client id", client.ID).
-			Msg("client connected")
+		log.Info().Any("token", token).Msg("token is")
+		log.Info().Uint("id", claims.UserID).Str("email", claims.Email).Msg("user data from token")
 
-		defer func() {
-			log.Info().
-				Uint("client id", client.ID).
-				Msg("client disconnected")
-
-			h.hub.UnregisterClient(client)
-			conn.Close()
-		}()
-
-		go client.WritePump()
-
-		client.ReadPump()
-	})(c)
+		if token != nil {
+			return c.SendStatus(fiber.StatusOK)
+		}
+		return c.SendStatus(fiber.StatusBadRequest)
+	})
 }

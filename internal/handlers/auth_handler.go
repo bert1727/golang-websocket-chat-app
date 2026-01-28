@@ -7,21 +7,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type HTTPHandler interface {
+type AuthJWTHandler interface {
 	Register(c fiber.Ctx) error
 	Login(c fiber.Ctx) error
 	RefreshToken(c fiber.Ctx) error
 }
 
-func NewHTTPNandler(s service.AuthService) HTTPHandler {
-	return &httpHandler{authService: s}
+func NewAuthJWTHandler(s service.AuthService) AuthJWTHandler {
+	return &authHandler{authService: s}
 }
 
-type httpHandler struct {
+type authHandler struct {
 	authService service.AuthService
 }
 
-func (h *httpHandler) Register(c fiber.Ctx) error {
+func (h *authHandler) Register(c fiber.Ctx) error {
 	var req domain.RegisterRequest
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad request"})
@@ -36,7 +36,7 @@ func (h *httpHandler) Register(c fiber.Ctx) error {
 }
 
 // TODO: change return types
-func (h *httpHandler) Login(c fiber.Ctx) error {
+func (h *authHandler) Login(c fiber.Ctx) error {
 	var req domain.LoginRequest
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
@@ -63,7 +63,7 @@ func (h *httpHandler) Login(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *httpHandler) RefreshToken(c fiber.Ctx) error {
+func (h *authHandler) RefreshToken(c fiber.Ctx) error {
 	refreshToken := c.Cookies("refresh_token")
 	log.Info().Str("refresh_token", refreshToken).Msg("refresh_token from cookie is")
 	if refreshToken == "" {
