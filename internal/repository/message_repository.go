@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/bert1727/ChatApp/internal/config"
 	"github.com/bert1727/ChatApp/internal/domain"
 	"gorm.io/gorm"
 )
@@ -14,8 +15,10 @@ type messageRepository struct {
 	db *gorm.DB
 }
 
-func NewMessageRepository(db *gorm.DB) MessageRepository {
-	return &messageRepository{db: db}
+func NewMessageRepository() MessageRepository {
+	return &messageRepository{
+		db: config.New().DB,
+	}
 }
 
 func (r *messageRepository) FindMessageByID(messageID string) (*domain.Message, error) {

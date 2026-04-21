@@ -1,14 +1,14 @@
 # TODO
 
-- [x] Add relations between messages and users via foreign keys in user table
-
-- [x] Add validation for models
-      (partially)
-- [x] Move all middleware in separate file
-
+- Add tests for methods
 - different mods for prod and dev app
-- Add logout endpoint
 - Create return types for services and handlers
+
+- [x] Add relations between messages and users via foreign keys in user table
+- [x] Add validation for models
+(partially)
+- [x] Move all middleware in separate file
+- [x] Add logout endpoint (add it on client)
 
 ```
  // consoleWriter := zerolog.ConsoleWriter{

@@ -16,9 +16,9 @@ import (
 )
 
 type authService struct {
-	userRepo repository.UserRepository
-	cfg      *config.Config
-	valid    *validator.Validate
+	userRepo  repository.UserRepository
+	cfg       *config.Config
+	validator *validator.Validate
 }
 
 type AuthService interface {
@@ -29,11 +29,11 @@ type AuthService interface {
 	GenerateTokens(user *domain.User) (accessToken, refreshToken string, err error)
 }
 
-func NewAuthService(userRepo repository.UserRepository, cfg *config.Config) AuthService {
+func NewAuthService() AuthService {
 	return &authService{
-		userRepo: userRepo,
-		cfg:      cfg,
-		valid:    validator.New(),
+		userRepo:  repository.NewUserRepository(),
+		cfg:       config.New(),
+		validator: validator.New(),
 	}
 }
 
@@ -44,8 +44,10 @@ func (s *authService) GenerateTokens(user *domain.User) (string, string, error) 
 		Email:    user.Email,
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(
+				time.Duration(
+					config.New().HTTPAccessTokenExpire) * time.Minute)),
+			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},
 	}
 
@@ -59,8 +61,10 @@ func (s *authService) GenerateTokens(user *domain.User) (string, string, error) 
 	refreshClaims := domain.JWTClaims{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(
+				time.Duration(
+					config.New().HTTPRefreshTokenExpire) * 24 * time.Hour)),
+			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},
 	}
 
@@ -102,7 +106,6 @@ func (s *authService) Login(email, password string) (*domain.LoginResponse, erro
 	}
 
 	if err := CheckPassword(user.Password, password); err != nil {
-		fmt.Println("Пароли:\n", user.Password, password)
 		log.Info().Msg("invalid password")
 		return nil, fmt.Errorf("invalid credentials")
 	}
@@ -121,7 +124,7 @@ func (s *authService) Login(email, password string) (*domain.LoginResponse, erro
 
 func (s *authService) Register(req *domain.RegisterRequest) (*domain.LoginResponse, error) {
 	// Validation
-	err := s.valid.Struct(*req)
+	err := s.validator.Struct(*req)
 	if err != nil {
 		var validateErrs validator.ValidationErrors
 		if errors.As(err, &validateErrs) {
@@ -179,7 +182,7 @@ func (s *authService) RefreshToken(refreshToken string) (string, error) {
 	}
 
 	accessToken, _, err := s.GenerateTokens(user)
-	log.Info().Uint("user id", user.ID).Msg("accessToken generated for user")
+	log.Info().Uint("user id", user.ID).Msg("accessToken was generated")
 	return accessToken, err
 }
 

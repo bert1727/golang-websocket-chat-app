@@ -14,7 +14,7 @@ import (
 type Hub interface {
 	Run()
 	SendToRoom(d string, msg domain.Message)
-	SendToUser(userID uint, msg domain.Message)
+	SendToUser(msg domain.Message)
 	UnregisterClient(c *Client)
 	RegisterClient(c *Client)
 }
@@ -57,7 +57,7 @@ func (h *hub) Run() {
 
 		case msg := <-h.broadcast:
 			if msg.ReceiverID != 0 {
-				h.SendToUser(msg.ReceiverID, msg)
+				h.SendToUser(msg)
 				continue
 			}
 		}
@@ -68,12 +68,13 @@ func (h *hub) SendToRoom(d string, msg domain.Message) {
 	panic("unimplemented")
 }
 
-func (h *hub) SendToUser(userID uint, msg domain.Message) {
-	log.Info("the message was get almost... User id is ", userID)
-	if c, ok := h.clients[userID]; ok {
-		log.Info("the message sent to user:", "userID", userID, "msg", msg.Content)
+func (h *hub) SendToUser(msg domain.Message) {
+	log.Info("the message was get almost... User id is ", msg.ReceiverID)
+	if c, ok := h.clients[msg.ReceiverID]; ok {
+		log.Info("the message sent to user:", "userID", msg.ReceiverID, "msg", msg.Content)
 
-		msg.SenderID = c.ID
+		msg.ReceiverName = c.Username
+
 		err := validator.New().Struct(msg)
 		if err != nil {
 			// log.Error().Err(err).Msg("Failed to validate a new message")

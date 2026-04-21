@@ -20,8 +20,10 @@ type userService struct {
 	repo repository.UserRepository
 }
 
-func NewUserService(repo repository.UserRepository) UserService {
-	return &userService{repo: repo}
+func NewUserService() UserService {
+	return &userService{
+		repo: repository.NewUserRepository(),
+	}
 }
 
 func (s *userService) FindUserByID(userID uint) (*domain.User, error) {

@@ -14,17 +14,18 @@ type MessageModels struct {
 }
 
 // DTO
-// FIX: implement all relations in db
 type Message struct {
 	ID   uint `gorm:"primaryKey"`
 	Type string
 
-	SenderID uint `gorm:"not null" validate:"required"`
-	Sender   User `json:"-" validate:"-" gorm:"foreignKey:SenderID;references:ID" `
+	SenderID   uint `gorm:"not null" validate:"required"`
+	Sender     User `json:"-" validate:"-" gorm:"foreignKey:SenderID;references:ID" `
+	SenderName string
 
-	ReceiverID uint `gorm:"not null" validate:"required"`
-	Receiver   User `json:"-" validate:"-" gorm:"foreignKey:ReceiverID;references:ID"`
+	ReceiverID   uint `gorm:"not null" validate:"required"`
+	Receiver     User `json:"-" validate:"-" gorm:"foreignKey:ReceiverID;references:ID"`
+	ReceiverName string
 
 	Content   string
-	Timestamp time.Time
+	CreatedAt time.Time
 }

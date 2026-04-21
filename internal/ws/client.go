@@ -11,13 +11,13 @@ import (
 
 // type client interface{}
 
-// TODO: make an interface for client
 type Client struct {
 	ID       uint
 	Conn     *websocket.Conn // placeholder for actual ws conn
 	Hub      Hub
 	SendChan chan domain.Message
 	RoomID   string
+	Username string
 }
 
 func (c *Client) Send(msg domain.Message) {
@@ -32,12 +32,16 @@ func (c *Client) ReadPump() {
 			c.sendError()
 			c.Hub.UnregisterClient(c)
 			log.Err(err).Msg("Failed to read json message")
-			return
+			return // FIX: don't stop ws connection
 		}
 
 		// forward to hub
 		fmt.Println("Received message from client:", c.ID, "Message:", msg, msg.ReceiverID)
-		c.Hub.SendToUser(msg.ReceiverID, msg)
+
+		msg.SenderID = c.ID
+		msg.SenderName = c.Username
+
+		c.Hub.SendToUser(msg)
 		// c.Hub.broadcast <- msg
 	}
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 
+	"github.com/bert1727/ChatApp/internal/config"
 	"github.com/bert1727/ChatApp/internal/domain"
 	"gorm.io/gorm"
 )
@@ -17,8 +18,10 @@ type UserRepository interface {
 	GetByEmail(email string) (*domain.User, error)
 }
 
-func NewUserRepository(db *gorm.DB) UserRepository {
-	return &userRepository{db: db}
+func NewUserRepository() UserRepository {
+	return &userRepository{
+		db: config.New().DB,
+	}
 }
 
 type userRepository struct {

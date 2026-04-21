@@ -7,5 +7,5 @@ import (
 func SetupCustomMiddlewares(app *fiber.App) {
 	SetupCors(app)
 	SetupRecover(app)
-	SetWSConnectionMiddleware(app)
+	SetupWSConnectionMiddleware(app)
 }

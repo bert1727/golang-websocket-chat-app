@@ -28,21 +28,36 @@ func NewWSHandler(h ws.Hub, us service.UserService) WSHandler {
 
 func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
 	token := jwtware.FromContext(c)
+	if token == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(domain.NewAPIError(
+			"missing token",
+			fiber.StatusUnauthorized,
+			nil,
+		))
+	}
 
-	// FIX: Move in separate file
-	log.Info().Any("token from context", token).Msg("token is")
-	claims := token.Claims.(*domain.JWTClaims)
-	if claims == nil {
-		return c.SendStatus(fiber.StatusBadRequest)
+	log.Info().Msg("token from context was successfully gotten")
+
+	claims, ok := token.Claims.(*domain.JWTClaims)
+	if !ok || claims == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(
+			domain.NewAPIError(
+				"invalid token",
+				fiber.StatusUnauthorized,
+				nil,
+			))
+		// return c.SendStatus(fiber.StatusBadRequest).
 	}
 
 	user, err := h.userService.FindUserByID(claims.UserID)
 	if err != nil {
 		log.Info().Msg("user not found")
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			// NOTE: user is not register or logout so do a redirect
-			"error": "user not found",
-		})
+
+		return c.Status(fiber.StatusUnauthorized).JSON(domain.NewAPIError(
+			"unauthorized",
+			fiber.StatusUnauthorized,
+			nil,
+		))
 	}
 
 	return websocket.New(func(conn *websocket.Conn) {
@@ -51,9 +66,11 @@ func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
 			Hub:      h.hub,
 			SendChan: make(chan domain.Message, 32),
 			ID:       user.ID,
+			Username: user.Username,
 		}
 
 		h.hub.RegisterClient(client)
+
 		log.Info().
 			Uint("client id", client.ID).
 			Msg("client connected")
@@ -64,7 +81,10 @@ func (h *wsHandler) HandleWSConnection(c fiber.Ctx) error {
 				Msg("client disconnected")
 
 			h.hub.UnregisterClient(client)
-			conn.Close()
+			err := conn.Close()
+			if err != nil {
+				log.Err(err).Msg("can not close conn")
+			}
 		}()
 
 		go client.WritePump()

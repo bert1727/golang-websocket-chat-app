@@ -13,6 +13,7 @@ func SetupDB() *gorm.DB {
 	db, err := connectDB()
 	if err != nil {
 		fmt.Println("failed to connect db, error:", err)
+		panic("fail")
 	}
 
 	db.Exec("PRAGMA foreign_keys = ON")

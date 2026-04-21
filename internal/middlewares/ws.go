@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func SetWSConnectionMiddleware(app *fiber.App) {
+func SetupWSConnectionMiddleware(app *fiber.App) {
 	app.Use("/ws", func(c fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			return c.Next()

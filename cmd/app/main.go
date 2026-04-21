@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/bert1727/ChatApp/internal/app"
-	"github.com/bert1727/ChatApp/internal/config"
 	"github.com/bert1727/ChatApp/internal/logger"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
@@ -25,11 +24,10 @@ func main() {
 			return c.Status(code).SendString("something went wrong")
 		},
 	})
-	cfg := config.New()
 
 	logger.SetupLoggerWithFileConsoleWriter(fiberApp, "logs.log")
 
-	app.Build(fiberApp, cfg)
+	app.Build(fiberApp)
 
 	log.Info().Msg("Server running on http://localhost:6969")
 	log.Fatal().Err(fiberApp.Listen(":6969"))

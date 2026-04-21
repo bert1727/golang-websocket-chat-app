@@ -37,12 +37,11 @@ func NewHandlers(
 	authService service.AuthService,
 	hub ws.Hub,
 	userService service.UserService,
-	cfg *config.Config,
 ) *Handlers {
 	return &Handlers{
 		Auth: NewAuthJWTHandler(authService),
 		WS:   NewWSHandler(hub, userService),
-		Cfg:  cfg,
+		Cfg:  config.New(),
 	}
 }
 
