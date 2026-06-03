@@ -65,7 +65,7 @@ func (c *Client) sendError() {
 	}
 	err := c.Conn.WriteJSON(errorMsg)
 	if err != nil {
-		log.Error().Msg("failed to write json error")
+		log.Error().Err(err).Msg("failed to write json error")
 	}
 
 	c.SendChan <- errorMsg

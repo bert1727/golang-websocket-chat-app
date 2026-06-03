@@ -502,3 +502,100 @@
 {"level":"info","time":"2026-04-22T00:45:01+03:00","message":"successfully saved a message"}
 {"level":"info","time":"2026-04-22T00:45:07+03:00","message":"successfully saved a message"}
 {"level":"info","time":"2026-04-22T01:15:35+03:00","message":"Server running on http://localhost:6969"}
+{"level":"info","time":"2026-04-23T01:00:47+03:00","message":"Server running on http://localhost:6969"}
+{"level":"info","ip":"127.0.0.1","latency":"15.847µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:00:50+03:00","message":"Success"}
+{"level":"error","error":"Key: 'RegisterRequest.Email' Error:Field validation for 'Email' failed on the 'required' tag\nKey: 'RegisterRequest.Username' Error:Field validation for 'Username' failed on the 'required' tag\nKey: 'RegisterRequest.Password' Error:Field validation for 'Password' failed on the 'min' tag\nKey: 'RegisterRequest.PasswordConfirm' Error:Field validation for 'PasswordConfirm' failed on the 'required' tag","time":"2026-04-23T01:00:51+03:00","message":"failed to register user"}
+{"level":"warn","ip":"127.0.0.1","latency":"261.71µs","status":400,"method":"POST","url":"/auth/register","time":"2026-04-23T01:00:51+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"247.607µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:03:01+03:00","message":"Success"}
+{"level":"error","error":"Key: 'RegisterRequest.Email' Error:Field validation for 'Email' failed on the 'required' tag\nKey: 'RegisterRequest.Username' Error:Field validation for 'Username' failed on the 'required' tag\nKey: 'RegisterRequest.Password' Error:Field validation for 'Password' failed on the 'min' tag\nKey: 'RegisterRequest.PasswordConfirm' Error:Field validation for 'PasswordConfirm' failed on the 'required' tag","time":"2026-04-23T01:03:01+03:00","message":"failed to register user"}
+{"level":"warn","ip":"127.0.0.1","latency":"286.293µs","status":400,"method":"POST","url":"/auth/register","time":"2026-04-23T01:03:01+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"25.883µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:03:46+03:00","message":"Success"}
+{"level":"error","error":"Key: 'RegisterRequest.Email' Error:Field validation for 'Email' failed on the 'required' tag\nKey: 'RegisterRequest.Username' Error:Field validation for 'Username' failed on the 'required' tag\nKey: 'RegisterRequest.Password' Error:Field validation for 'Password' failed on the 'min' tag\nKey: 'RegisterRequest.PasswordConfirm' Error:Field validation for 'PasswordConfirm' failed on the 'required' tag","time":"2026-04-23T01:03:46+03:00","message":"failed to register user"}
+{"level":"warn","ip":"127.0.0.1","latency":"351.733µs","status":400,"method":"POST","url":"/auth/register","time":"2026-04-23T01:03:46+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"99.752µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:04:02+03:00","message":"Success"}
+{"level":"error","error":"Key: 'RegisterRequest.Password' Error:Field validation for 'Password' failed on the 'min' tag","time":"2026-04-23T01:04:02+03:00","message":"failed to register user"}
+{"level":"warn","ip":"127.0.0.1","latency":"953.353µs","status":400,"method":"POST","url":"/auth/register","time":"2026-04-23T01:04:02+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"100.463µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:04:24+03:00","message":"Success"}
+{"level":"info","time":"2026-04-23T01:04:25+03:00","message":"user was added"}
+{"level":"info","time":"2026-04-23T01:04:25+03:00","message":"accessToken is generated"}
+{"level":"info","ip":"127.0.0.1","latency":"67.176542ms","status":200,"method":"POST","url":"/auth/register","time":"2026-04-23T01:04:25+03:00","message":"Success"}
+{"level":"warn","ip":"127.0.0.1","latency":"260.762µs","status":404,"method":"GET","url":"/api/chats","error":"Not Found","time":"2026-04-23T01:04:25+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"166.896µs","status":404,"method":"GET","url":"/api/chats","error":"Not Found","time":"2026-04-23T01:05:43+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"170.955µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:07:16+03:00","message":"Success"}
+{"level":"info","time":"2026-04-23T01:07:16+03:00","message":"user was added"}
+{"level":"info","time":"2026-04-23T01:07:16+03:00","message":"accessToken is generated"}
+{"level":"info","ip":"127.0.0.1","latency":"70.509449ms","status":200,"method":"POST","url":"/auth/register","time":"2026-04-23T01:07:16+03:00","message":"Success"}
+{"level":"warn","ip":"127.0.0.1","latency":"345.123µs","status":404,"method":"GET","url":"/api/chats","error":"Not Found","time":"2026-04-23T01:07:16+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"173.775µs","status":404,"method":"GET","url":"/api/chats","error":"Not Found","time":"2026-04-23T01:07:31+03:00","message":"Client error"}
+{"level":"info","time":"2026-04-23T01:08:01+03:00","message":"Server running on http://localhost:6969"}
+{"level":"info","ip":"127.0.0.1","latency":"17.086µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:08:22+03:00","message":"Success"}
+{"level":"info","time":"2026-04-23T01:08:22+03:00","message":"user was added"}
+{"level":"info","time":"2026-04-23T01:08:22+03:00","message":"accessToken is generated"}
+{"level":"info","ip":"127.0.0.1","latency":"68.623034ms","status":200,"method":"POST","url":"/auth/register","time":"2026-04-23T01:08:22+03:00","message":"Success"}
+{"level":"warn","ip":"127.0.0.1","latency":"100.369µs","status":404,"method":"GET","url":"/api/chats","error":"Not Found","time":"2026-04-23T01:08:22+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"38.718µs","status":400,"method":"GET","url":"/ws?name=alba&password=123","time":"2026-04-23T01:09:17+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"43.718µs","status":400,"method":"GET","url":"/ws","time":"2026-04-23T01:10:07+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"22.103µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:10:57+03:00","message":"Success"}
+{"level":"info","time":"2026-04-23T01:10:58+03:00","message":"user was added"}
+{"level":"info","time":"2026-04-23T01:10:58+03:00","message":"accessToken is generated"}
+{"level":"info","ip":"127.0.0.1","latency":"68.817751ms","status":200,"method":"POST","url":"/auth/register","time":"2026-04-23T01:10:58+03:00","message":"Success"}
+{"level":"warn","ip":"127.0.0.1","latency":"55.631µs","status":400,"method":"GET","url":"/ws","time":"2026-04-23T01:10:58+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"38.566µs","status":400,"method":"GET","url":"/ws","time":"2026-04-23T01:11:30+03:00","message":"Client error"}
+{"level":"info","time":"2026-04-23T01:30:45+03:00","message":"Server running on http://localhost:6969"}
+{"level":"warn","ip":"127.0.0.1","latency":"132.729µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJlbWFpbCI6ImZkc2Fmamthc2RmQGdtLmNvbSIsInVzZXJuYW1lIjoiZmFzZGYiLCJleHAiOjE3NzY4OTY3NTgsImlhdCI6MTc3Njg5NTg1OH0.rvQHLSPAOf4mgtAeerslEXqGMT7NhY-YzcLTpq3NLKw","time":"2026-04-23T01:30:48+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"67.93µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJlbWFpbCI6ImZkc2Fmamthc2RmQGdtLmNvbSIsInVzZXJuYW1lIjoiZmFzZGYiLCJleHAiOjE3NzY4OTY3NTgsImlhdCI6MTc3Njg5NTg1OH0.rvQHLSPAOf4mgtAeerslEXqGMT7NhY-YzcLTpq3NLKw","time":"2026-04-23T01:30:49+03:00","message":"Client error"}
+{"level":"info","ip":"127.0.0.1","latency":"16.273µs","status":204,"method":"OPTIONS","url":"/auth/register","time":"2026-04-23T01:31:17+03:00","message":"Success"}
+{"level":"info","time":"2026-04-23T01:31:18+03:00","message":"user was added"}
+{"level":"info","time":"2026-04-23T01:31:18+03:00","message":"accessToken is generated"}
+{"level":"info","ip":"127.0.0.1","latency":"66.41211ms","status":200,"method":"POST","url":"/auth/register","time":"2026-04-23T01:31:18+03:00","message":"Success"}
+{"level":"info","time":"2026-04-23T01:31:18+03:00","message":"token from context was successfully gotten"}
+{"level":"info","ip":"127.0.0.1","latency":"360.966µs","status":101,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T01:31:18+03:00","message":"Success"}
+{"level":"info","client id":8,"time":"2026-04-23T01:31:18+03:00","message":"client connected"}
+{"level":"info","client Id":8,"time":"2026-04-23T01:31:18+03:00","message":"write pump started for client:"}
+{"level":"error","time":"2026-04-23T01:31:28+03:00","message":"failed to write json error"}
+{"level":"error","error":"websocket: close 1001 (going away)","time":"2026-04-23T01:31:28+03:00","message":"Failed to read json message"}
+{"level":"info","client id":8,"time":"2026-04-23T01:31:28+03:00","message":"client disconnected"}
+{"level":"error","error":"websocket: close sent","time":"2026-04-23T01:31:28+03:00","message":"Error writing json"}
+{"level":"info","time":"2026-04-23T01:31:28+03:00","message":"token from context was successfully gotten"}
+{"level":"info","ip":"127.0.0.1","latency":"392.934µs","status":101,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T01:31:28+03:00","message":"Success"}
+{"level":"info","client id":8,"time":"2026-04-23T01:31:28+03:00","message":"client connected"}
+{"level":"info","client Id":8,"time":"2026-04-23T01:31:28+03:00","message":"write pump started for client:"}
+{"level":"error","time":"2026-04-23T01:32:24+03:00","message":"failed to write json error"}
+{"level":"error","error":"websocket: close 1001 (going away)","time":"2026-04-23T01:32:24+03:00","message":"Failed to read json message"}
+{"level":"info","client id":8,"time":"2026-04-23T01:32:24+03:00","message":"client disconnected"}
+{"level":"error","error":"nil *Conn","time":"2026-04-23T01:32:24+03:00","message":"Error writing json"}
+{"level":"info","time":"2026-04-23T01:32:25+03:00","message":"token from context was successfully gotten"}
+{"level":"info","ip":"127.0.0.1","latency":"657.46µs","status":101,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T01:32:25+03:00","message":"Success"}
+{"level":"info","client id":8,"time":"2026-04-23T01:32:25+03:00","message":"client connected"}
+{"level":"info","client Id":8,"time":"2026-04-23T01:32:25+03:00","message":"write pump started for client:"}
+{"level":"error","time":"2026-04-23T01:34:00+03:00","message":"failed to write json error"}
+{"level":"error","error":"websocket: close 1001 (going away)","time":"2026-04-23T01:34:00+03:00","message":"Failed to read json message"}
+{"level":"info","client id":8,"time":"2026-04-23T01:34:00+03:00","message":"client disconnected"}
+{"level":"error","error":"websocket: close sent","time":"2026-04-23T01:34:00+03:00","message":"Error writing json"}
+{"level":"info","time":"2026-04-23T01:34:01+03:00","message":"token from context was successfully gotten"}
+{"level":"info","ip":"127.0.0.1","latency":"406.147µs","status":101,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T01:34:01+03:00","message":"Success"}
+{"level":"info","client id":8,"time":"2026-04-23T01:34:01+03:00","message":"client connected"}
+{"level":"info","client Id":8,"time":"2026-04-23T01:34:01+03:00","message":"write pump started for client:"}
+{"level":"error","time":"2026-04-23T01:36:43+03:00","message":"failed to write json error"}
+{"level":"error","error":"websocket: close 1005 (no status)","time":"2026-04-23T01:36:43+03:00","message":"Failed to read json message"}
+{"level":"info","client id":8,"time":"2026-04-23T01:36:43+03:00","message":"client disconnected"}
+{"level":"error","error":"nil *Conn","time":"2026-04-23T01:36:43+03:00","message":"Error writing json"}
+{"level":"info","time":"2026-04-23T01:36:43+03:00","message":"token from context was successfully gotten"}
+{"level":"info","ip":"127.0.0.1","latency":"590.733µs","status":101,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T01:36:43+03:00","message":"Success"}
+{"level":"info","client id":8,"time":"2026-04-23T01:36:43+03:00","message":"client connected"}
+{"level":"info","client Id":8,"time":"2026-04-23T01:36:43+03:00","message":"write pump started for client:"}
+{"level":"error","time":"2026-04-23T01:36:45+03:00","message":"failed to write json error"}
+{"level":"error","error":"websocket: close 1001 (going away)","time":"2026-04-23T01:36:45+03:00","message":"Failed to read json message"}
+{"level":"info","client id":8,"time":"2026-04-23T01:36:45+03:00","message":"client disconnected"}
+{"level":"error","error":"websocket: close sent","time":"2026-04-23T01:36:45+03:00","message":"Error writing json"}
+{"level":"info","time":"2026-04-23T01:36:46+03:00","message":"token from context was successfully gotten"}
+{"level":"info","ip":"127.0.0.1","latency":"305.236µs","status":101,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T01:36:46+03:00","message":"Success"}
+{"level":"info","client id":8,"time":"2026-04-23T01:36:46+03:00","message":"client connected"}
+{"level":"info","client Id":8,"time":"2026-04-23T01:36:46+03:00","message":"write pump started for client:"}
+{"level":"info","time":"2026-04-23T20:53:06+03:00","message":"Server running on http://localhost:6969"}
+{"level":"warn","ip":"127.0.0.1","latency":"1.79308ms","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T20:53:14+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"104.146µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T20:54:28+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"82.534µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T20:56:46+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"54.601µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T20:56:53+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"62.81µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T20:57:06+03:00","message":"Client error"}
+{"level":"warn","ip":"127.0.0.1","latency":"60.146µs","status":401,"method":"GET","url":"/ws?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJlbWFpbCI6ImFmZEBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImZhc2pka2YiLCJleHAiOjE3NzY4OTc5NzgsImlhdCI6MTc3Njg5NzA3OH0.eRFtFVJqkDpXK863xNQDcaUZRgGMZRCVn-11JuEOdHA","time":"2026-04-23T20:57:07+03:00","message":"Client error"}

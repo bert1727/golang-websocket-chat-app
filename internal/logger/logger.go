@@ -2,6 +2,8 @@ package logger
 
 import (
 	"os"
+	"path/filepath"
+	"strconv"
 
 	middleware "github.com/gofiber/contrib/v3/zerolog"
 	"github.com/gofiber/fiber/v3"
@@ -19,8 +21,18 @@ func SetupLoggerWithConsoleWriter(app *fiber.App) {
 	logger := zerolog.New(consoleWriter).
 		With().
 		Timestamp().
+		Stack().
 		Logger()
-	log.Logger = zerolog.New(consoleWriter).With().Caller().Timestamp().Caller().Logger()
+	log.Logger = zerolog.New(consoleWriter).With().
+		Stack().
+		Caller().
+		Timestamp().
+		Logger()
+
+	// for beautiful caller
+	zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
+		return filepath.Base(file) + ":" + strconv.Itoa(line)
+	}
 	app.Use(middleware.New(middleware.Config{
 		Logger: &logger,
 	}))

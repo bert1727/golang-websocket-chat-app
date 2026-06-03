@@ -1,9 +1,15 @@
 # TODO
 
+добавить это
+// Загружаем историю через Axios (используя наш инстанс с интерсепторами)
+api.get(`/messages/${receiverId}`).then(res => {
+setMessages(res.data);
+}).catch(console.error);
+
 - Add tests for methods
 - different mods for prod and dev app
-- Create return types for services and handlers
 
+- [x] Create return types for services and handlers
 - [x] Add relations between messages and users via foreign keys in user table
 - [x] Add validation for models
 (partially)

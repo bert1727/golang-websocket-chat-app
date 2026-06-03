@@ -27,8 +27,9 @@ func (h *Handlers) SetupHandlers(app *fiber.App) {
 func (h *Handlers) SetupRestrictedHandlers(app *fiber.App) {
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{Key: []byte(h.Cfg.JWTSecret)},
-		Extractor:  extractors.FromAuthHeader("Bearer"),
-		Claims:     &domain.JWTClaims{},
+		// Extractor:  extractors.FromAuthHeader("Bearer"),
+		Extractor: extractors.FromQuery("token"),
+		Claims:    &domain.JWTClaims{},
 	}))
 	app.Get("/ws", h.WS.HandleWSConnection)
 }

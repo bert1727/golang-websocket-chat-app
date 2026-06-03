@@ -72,7 +72,7 @@ func (h *authHandler) Login(c fiber.Ctx) error {
 		Value:    res.RefreshToken,
 		HTTPOnly: true,
 		Secure:   false,            // TODO: change for https
-		SameSite: "Strict",         // NOTE: maybe change to "Lax"
+		SameSite: "Lax",            // NOTE: maybe change to "Lax"
 		MaxAge:   7 * 24 * 60 * 60, // 7 days
 	})
 

@@ -25,7 +25,8 @@ func main() {
 		},
 	})
 
-	logger.SetupLoggerWithFileConsoleWriter(fiberApp, "logs.log")
+	// logger.SetupLoggerWithFileConsoleWriter(fiberApp, "logs.log")
+	logger.SetupLoggerWithConsoleWriter(fiberApp)
 
 	app.Build(fiberApp)
 
